@@ -46,7 +46,7 @@ const createPhase = async (req, res) => {
 
 // Controller to update phase status
 const updatePhaseStatus = async (req, res) => {
-  const { status, completionDate, isOnTime } = req.body;
+  const { status, completionDate } = req.body;
 
   try {
     const phase = await Phase.findById(req.params.id);
@@ -54,7 +54,34 @@ const updatePhaseStatus = async (req, res) => {
     if (phase) {
       phase.status = status;
       phase.completionDate = completionDate;
-      phase.isOnTime = isOnTime;
+
+      if (completionDate) {
+        const completionDateObj = new Date(completionDate);
+        const deadlineObj = new Date(phase.deadline);
+
+        // Calculate time difference
+        const timeDifferenceMs = completionDateObj - deadlineObj;
+        const absTimeDifferenceMs = Math.abs(timeDifferenceMs);
+        const timeDifferenceDays = Math.floor(absTimeDifferenceMs / (1000 * 60 * 60 * 24));
+        const timeDifferenceHours = Math.floor((absTimeDifferenceMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const timeDifferenceMinutes = Math.floor((absTimeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60));
+
+        if (completionDateObj < deadlineObj) {
+          phase.isOnTime = true;
+          phase.timeDifference = `${timeDifferenceDays} days ${timeDifferenceHours} hours ${timeDifferenceMinutes} minutes early`;
+        } else if (completionDateObj > deadlineObj) {
+          phase.isOnTime = false;
+          phase.timeDifference = `${timeDifferenceDays} days ${timeDifferenceHours} hours ${timeDifferenceMinutes} minutes delay`;
+        } else {
+          phase.isOnTime = true;
+          phase.timeDifference = 'On time';
+        }
+      } else {
+        // If no completionDate is provided, assume it's not completed yet
+        phase.isOnTime = null; // Or some default value indicating no update
+        phase.timeDifference = null;
+      }
+
       await phase.save();
       res.json(phase);
     } else {
@@ -64,5 +91,6 @@ const updatePhaseStatus = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
 
 export { createPhase, updatePhaseStatus };

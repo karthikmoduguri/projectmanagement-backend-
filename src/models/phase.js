@@ -9,6 +9,7 @@ const phaseSchema = new mongoose.Schema({
     completionDate: { type: Date },
     isOnTime: { type: Boolean, default: true },
     deadline: { type: Date }, 
+    timeDifference: { type: String },
   },{timestamps:true});
   
   export const Phase = mongoose.model('Phase', phaseSchema);

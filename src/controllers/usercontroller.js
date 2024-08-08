@@ -30,11 +30,11 @@ const registerUser = async (req, res) => {
   };
   
   const authUser = async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password,role } = req.body;
   
     const user = await User.findOne({ username });
   
-    if (user && (await user.matchPassword(password))) {
+    if (user && (await user.matchPassword(password)) && (user.role == role)) {
       res.json({
         _id: user._id,
         username: user.username,
