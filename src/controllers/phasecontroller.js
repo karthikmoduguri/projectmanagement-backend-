@@ -15,6 +15,22 @@ const getProjectIdByIdentifier = async (req, res) => {
   }
 };
 
+const getphasebyid=async (req, res) => {
+  try {
+      const { phaseId } = req.params;
+      const phase = await Phase.findById(phaseId);
+
+      if (!phase) {
+          return res.status(404).json({ message: 'Phase not found' });
+      }
+
+      res.status(200).json(phase);
+  } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+  }
+};
+export{getphasebyid};
+
 export { getProjectIdByIdentifier };
 
 const createPhase = async (req, res) => {
