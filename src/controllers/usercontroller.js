@@ -8,6 +8,9 @@ const registerUser = async (req, res) => {
     if (role === 'director' && registrationKey !== process.env.REGISTRATION_KEY) {
       return res.status(400).json({ message: 'Invalid registration key' });
     }
+    if (role === 'technical_officer' && registrationKey !== process.env.REGISTRATION_KEY2) {
+      return res.status(400).json({ message: 'Invalid registration key' });
+    }
   
     const userExists = await User.findOne({ username });
   

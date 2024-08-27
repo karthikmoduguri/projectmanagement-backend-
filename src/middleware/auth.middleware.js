@@ -36,6 +36,14 @@ const protect = async (req, res, next) => {
       res.status(401).json({ message: 'Not authorized as a project' });
     }
   };
+  const technicalOfficer = (req, res, next) => {
+    if (req.user && req.user.role === 'technical_officer') {
+        next();
+    } else {
+        res.status(401).json({ message: 'Not authorized as a technical officer' });
+    }
+};
+
   let blacklistedTokens = [];
 
 export const isTokenBlacklisted = (req, res, next) => {
@@ -53,4 +61,4 @@ export const blacklistToken = (req, res) => {
     res.status(200).json({ message: "Logged out successfully" });
 };
 
-  export {protect,admin,project}
+  export {protect,admin,project,technicalOfficer}

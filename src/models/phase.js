@@ -9,6 +9,14 @@ const phaseSchema = new mongoose.Schema({
     completionDate: { type: Date },
     isOnTime: { type: Boolean, default: true },
     deadline: { type: Date }, 
+    fileName: {type:String},
+    fileType: {type:String},
+    fileData: {type:Buffer}, 
+    verified: {
+      type: Boolean,
+      default: false // Initially set to false
+  },
+  isVerified: { type: Boolean, default: false },
     timeDifference: { type: String },
   },{timestamps:true});
   

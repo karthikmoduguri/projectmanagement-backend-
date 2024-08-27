@@ -29,6 +29,27 @@ const getphasebyid=async (req, res) => {
       res.status(500).json({ message: 'Server error' });
   }
 };
+
+const getverifiedforphase=async (req, res) => {
+  const { phaseId } = req.params;
+
+  try {
+      const phase = await Phase.findById(phaseId);
+      if (!phase) {
+          return res.status(404).json({ message: 'Phase not found' });
+      }
+
+      // Mark the phase as verified
+      phase.verified = true;
+      await phase.save();
+
+      res.json({ message: 'Phase verified successfully', phase });
+  } catch (error) {
+      res.status(500).json({ message: 'Error verifying phase' });
+  }
+}
+
+export{getverifiedforphase};
 export{getphasebyid};
 
 export { getProjectIdByIdentifier };
@@ -60,6 +81,20 @@ const createPhase = async (req, res) => {
   }
 };
 
+
+const verifyfordocument=async(req,res)=>{
+  const { id } = req.params;
+    try {
+        const updatedPhase = await Phase.findByIdAndUpdate(
+            id,
+            { isVerified: true }, // Set the verification status to true
+            { new: true }
+        );
+        res.status(200).json(updatedPhase);
+    } catch (error) {
+        res.status(500).json({ message: 'Error verifying the report' });
+    }
+};
 // Controller to update phase status
 const updatePhaseStatus = async (req, res) => {
   const { status, completionDate } = req.body;
@@ -109,4 +144,4 @@ const updatePhaseStatus = async (req, res) => {
 };
 
 
-export { createPhase, updatePhaseStatus };
+export { createPhase, updatePhaseStatus,verifyfordocument };
