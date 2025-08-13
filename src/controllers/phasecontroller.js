@@ -9,7 +9,7 @@ const getProjectIdByIdentifier = async (req, res) => {
   try {
       const project = await Project.findOne({ projectId: projectId });
       if (!project) return res.status(404).json({ message: 'Project not found' });
-      res.json({ _id: project._id,projectId:project.projectId });
+      res.json({ _id: project._id,projectId:project.projectId ,projectName:project.projectName,teamLead:project.teamLead,phases:project.phases });
   } catch (error) {
       res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -142,6 +142,25 @@ const updatePhaseStatus = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+const updatephasename =async (req, res) => {
+  const { monitor } = req.body;
+
+  try {
+    const phase = await Phase.findById(req.params.id);
+  
+
+    if (phase) {
+      phase.monitor=monitor;
+
+      await phase.save();
+      res.json(phase);
+    } else {
+      res.status(404).json({ message: 'Phase not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 
 
-export { createPhase, updatePhaseStatus,verifyfordocument };
+export { createPhase, updatephasename,updatePhaseStatus,verifyfordocument };
